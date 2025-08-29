@@ -1,0 +1,76 @@
+# version: "3.8"
+# services:
+#   backend:
+#     build: .
+#     container_name: backend_app
+#     restart: always
+#     ports:
+#       - "5002:5002"
+#     env_file:
+#       - .env
+#     depends_on:
+#       - mongo
+#       - redis
+
+#   mongo:
+#     image: mongo:6.0
+#     container_name: mongo_db
+#     restart: always
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - mongo_data:/data/db
+
+#   redis:
+#     image: redis:7-alpine
+#     container_name: redis_cache
+#     restart: always
+#     ports:
+#       - "6379:6379"
+#     volumes:
+#       - redis_data:/data
+
+# volumes:
+#   mongo_data:
+#   redis_data:
+
+
+
+
+
+
+
+version: "3.8"
+services:
+  backend:
+    build: ./server
+    container_name: backend
+    ports:
+      - "5002:5002"
+    env_file:
+      - ./server/.env
+    depends_on:
+      - redis_cache
+      - mongo
+    networks:
+      - app_net
+
+  redis_cache:
+    image: redis:7
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    networks:
+      - app_net
+
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge
