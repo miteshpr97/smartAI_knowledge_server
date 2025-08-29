@@ -3,7 +3,7 @@ import logger from "./logger.js";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI,);
+    await mongoose.connect(process.env.MONGODB_URI);
     logger.info("✅ MongoDB connected");
 
     mongoose.connection.on("disconnected", () => {
