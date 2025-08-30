@@ -5,6 +5,8 @@ import helmet from "helmet";
 import connectDB from "./config/db.js";
 import logger from "./config/logger.js";
 import rateLimiter from "./middleware/rateLimiter.js";
+import cookieParser from "cookie-parser";
+
 
 import authRoutes from "./routes/authRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
@@ -25,6 +27,7 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
+app.use(cookieParser()); 
 app.use(rateLimiter(100, 60)); // 100 req/min per IP
 
 // Routes

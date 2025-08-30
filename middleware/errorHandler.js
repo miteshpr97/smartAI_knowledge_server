@@ -1,10 +1,22 @@
-//middleware/errorHndler.js
+// //middleware/errorHndler.js
 
 import logger from "../config/logger.js";
 
-const errorHandler = async (err, req, res, next) => {
-  logger.error("❌ An error occurred:", err.message);
-  res.status(err.statusCode || 500).json({ message: "Internal Server Error" || err.message });
+const errorHandler = (err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+
+  if (process.env.NODE_ENV === "production") {
+    logger.error(`❌ ${message}`);
+  } else {
+    logger.error(`❌ ${err.stack}`);
+  }
+
+  res.status(statusCode).json({
+    success: false,
+    message,
+    ...(process.env.NODE_ENV !== "production" && { stack: err.stack }),
+  });
 };
 
 export default errorHandler;

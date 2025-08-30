@@ -1,0 +1,52 @@
+name: SmartAI Server CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      PORT: 5002
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Prettier Check
+        run: npx prettier --check .
+
+      - name: Run Tests
+        run: npm test
+
+      - name: Build Docker Image
+        run: docker build -t smartai-server .

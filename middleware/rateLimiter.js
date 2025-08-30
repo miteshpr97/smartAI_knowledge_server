@@ -1,3 +1,5 @@
+// middleware/rateLiniter.js
+
 import redisClient from "../config/redis.js";
 
 const rateLimiter = (limit, windowInSeconds) => {
